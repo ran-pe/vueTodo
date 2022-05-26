@@ -5,53 +5,50 @@
     <span class="addContainer" v-on:click="addTodo">
       <i class="fas fa-plus addBtn"></i>
     </span>
-      <Modal v-if="showModal" @close="showModal = false">
-        <!--
+    <Modal v-if="showModal" @close="showModal = false">
+      <!--
       you can use custom content here to overwrite
       default content
     -->
-        <h3 slot="header">경고!
-          <span class="closeModalBtn" v-on:click="showModal = false">
-            <i class="fas fa-times"></i>
-          </span>
-        </h3>
-        <div slot="body"> 아무것도 입력하지 않으셨습니다 </div>
-      </Modal>
-
-
+      <h3 slot="header">
+        경고!
+        <span class="closeModalBtn" v-on:click="showModal = false">
+          <i class="fas fa-times"></i>
+        </span>
+      </h3>
+      <div slot="body">아무것도 입력하지 않으셨습니다</div>
+    </Modal>
   </div>
 </template>
 
 <script>
-import Modal from './common/AlertModal.vue'
-
+import Modal from "./common/AlertModal.vue";
 
 export default {
   data: function () {
     return {
       newTodoItem: "",
-      showModal: false
+      showModal: false,
     };
   },
   methods: {
-    addTodo: function () {
+    addTodo() {
       if (this.newTodoItem !== "") {
-        // var obj = { completed: false, item: this.newTodoItem };
-        // // 저장하는 로직
-        // localStorage.setItem(this.newTodoItem, JSON.stringify(obj));
-        this.$emit('addTodoItem',this.newTodoItem)
+        // this.$emit("addTodoItem", this.newTodoItem);
+        const text = this.newTodoItem.trim();
+        this.$store.commit("addOneItem", text);
         this.clearInput();
       } else {
-        this.showModal=true
+        this.showModal = true;
       }
     },
-    clearInput: function () {
+    clearInput() {
       this.newTodoItem = "";
     },
   },
-  components:{
-    Modal: Modal
-  }
+  components: {
+    Modal,
+  },
 };
 </script>
 

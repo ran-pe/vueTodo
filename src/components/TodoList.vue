@@ -2,21 +2,21 @@
   <div>
     <transition-group name="list" tag="ul">
       <li
-        v-for="(todoItem, index) in propsdata"
+        v-for="(todoItem, index) in this.todoItems"
         v-bind:key="todoItem.item"
         class="shadow"
       >
         <span
           class="checkBtn"
           v-bind:class="{ checkBtnCompleted: todoItem.completed }"
-          v-on:click="toggleComplete(todoItem, index)"
+          v-on:click="toggleComplete({ todoItem, index })"
         >
           <i class="fas fa-check"></i>
         </span>
         <span v-bind:class="{ textCompleted: todoItem.completed }">{{
           todoItem.item
         }}</span>
-        <span class="removeBtn" v-on:click="removeTodo(todoItem, index)">
+        <span class="removeBtn" v-on:click="removeTodo({ todoItem, index })">
           <i class="fas fa-trash-alt"></i>
         </span>
       </li>
@@ -25,38 +25,34 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 export default {
-  // data: function () {
-  //   return {
-  //     todoItems: [],
-  //   };
-  // },
-  props:['propsdata'],
   methods: {
-    removeTodo: function (todoItem, index) {
-      this.$emit('removeItem', todoItem, index)
-      // localStorage.removeItem(todoItem);
-      // this.todoItems.splice(index, 1);
-    },
-    toggleComplete: function (todoItem, index) {
-      this.$emit('toggleItem', todoItem, index)
-      // todoItem.completed = !todoItem.completed;
-      // // 로컬 스토리지의 데이터를 갱신
-      // localStorage.removeItem(todoItem.item)
-      // localStorage.setItem(todoItem.item, JSON.stringify(todoItem))
-      // console.log(todoItem, index);
-    },
+    ...mapMutations({
+      removeTodo: "removeOneItem",
+      toggleComplete: "toggleOneItem",
+    }),
+    // removeTodo(todoItem, index) {
+    //   // this.$emit("removeItem", todoItem, index);
+    //   this.$store.commit("removeOneItem", { todoItem, index });
+    // },
+    // toggleComplete(todoItem, index) {
+    //   // this.$emit("toggleItem", todoItem, index);
+    //   this.$store.commit("toggleOneItem", { todoItem, index });
+    // },
   },
-  // created: function () {
-  //   if (localStorage.length > 0) {
-  //     for (var i = 0; i < localStorage.length; i++) {
-  //       this.todoItems.push(
-  //         JSON.parse(localStorage.getItem(localStorage.key(i)))
-  //       );
-  //       // this.todoItems.push(localStorage.key(i));
-  //     }
-  //   }
-  // },
+  computed: {
+    // todoItems() {
+    //   return this.$store.getters.storedTodoItem;
+    // }
+
+    // ...mapGetters(['storedTodoItem'])
+
+    ...mapGetters({
+      todoItems: "storedTodoItem",
+    }),
+  },
 };
 </script>
 
@@ -94,7 +90,8 @@ li {
   color: #b3adad;
 }
 
-.list-enter-active, .list-leave-active {
+.list-enter-active,
+.list-leave-active {
   transition: all 1s;
 }
 .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
